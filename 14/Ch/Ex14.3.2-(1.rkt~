@@ -1,0 +1,11 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-reader.ss" "lang")((modname |Ex14.3.2-(1|) (read-case-sensitive #t) (teachpacks ((lib "draw.rkt" "teachpack" "htdp"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "draw.rkt" "teachpack" "htdp")))))
+;; occurs1 : wp symbol -> number
+;;to producer the number of times the symbol occurs in the web page
+(define (occurs1 symbol wp)
+  (cond
+    [(empty? wp) 0]
+    [(equal? (first wp) symbol) (+ 1 (occurs1 symbol (rest wp)))]
+    [else (occurs1 symbol (rest wp))]))
+  

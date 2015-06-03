@@ -1,0 +1,55 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname Ex26.1.2) (read-case-sensitive #t) (teachpacks ((lib "draw.rkt" "teachpack" "htdp"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "draw.rkt" "teachpack" "htdp")))))
+(define (make-singles l) (map list l))
+(define (merge-all-neighbors l)
+             (cond
+               [(empty? l) empty]
+               [(empty? (rest l)) l]
+               [else (cons (merge1 (first l) (second l)) 
+                           (merge-all-neighbors (rest (rest l))))]))
+
+(define (merge l1 l2)
+  (cond
+    
+    [(and (> 1 0) (empty? l2)) l1]
+    [(and (empty? l1) (> 1 0)) l2]
+    [else (cond
+            [(> (first l1) (first l2))
+             (cons (first l2) (merge l1 (rest l2)))]
+            [(< (first l1) (first l2))
+             (cons (first l1) (merge (rest l1) l2))]
+            [(= (first l1) (first l2))
+             (cons (first l1)
+                   (cons (first l2) (merge (rest l1) (rest l2))))])]))
+
+(define (merge1 l1 l2)
+  (cond
+    [(and (empty? l1) (empty? l2)) empty]
+    [(and (cons? l1) (empty? l2)) l1]
+    [(and (empty? l1) (cons? l2)) l2]
+    [else
+     (cond
+       [(< (first l1) (first l2)) (append (list (first l1) (first l2)) (merge1 (rest l1) (rest l2))) ]
+       [(> (first l1) (first l2)) (append (list (first l2) (first l1)) (merge1 (rest l1) (rest l2))) ]
+       )]))
+
+#|
+;;Example 
+(merge-sort (list 2 3 1 5))
+(make-singles (list 2 3 1 5))
+= (list (list 2 ) (list 3) (list 1) (list 5))
+(merge-all-neighbors (list (list 2) (list 3) (list 1) (list 5)))
+= (list (list 2 3) (list 1 5))
+= (list (list 1 2 3 5))
+= OVER
+|#
+(define (merge-sort l)
+  (cond
+    
+    [(empty? l) empty]
+    [(empty? (rest l)) l]
+    [(number? (first l)) (merge-sort (merge-all-neighbors(make-singles l))) ]
+    [else (merge-sort (merge-all-neighbors l))
+       ]))
+  

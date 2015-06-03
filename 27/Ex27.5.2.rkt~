@@ -1,0 +1,102 @@
+;; The first three lines of this file were inserted by DrRacket. They record metadata
+;; about the language level of this file in a form that our tools can easily process.
+#reader(lib "htdp-intermediate-lambda-reader.ss" "lang")((modname Ex27.5.2) (read-case-sensitive #t) (teachpacks ((lib "draw.rkt" "teachpack" "htdp"))) (htdp-settings #(#t constructor repeating-decimal #f #t none #f ((lib "draw.rkt" "teachpack" "htdp")))))
+
+                
+
+#|
+(list (list  2 2 3 10)
+      (list 2 5 12 31)
+      (list 4 1 -2 1))
+
+|#
+
+;;简单的说，就是把三行变成两行，并且少一别 
+;;subtract-1 lsol -> lsol
+(define (subtract-2 lsol)
+  (cond
+    [(empty? lsol) empty]
+    [else (cons (first lsol) (subtract-ass (first lsol) (rest lsol)))]))
+
+;;完成 0－1 0-2 0 － 3 这样的sub操作
+;;subtract-ass : ls lsol
+(define (subtract-ass ls lsol)
+  (cond
+    [(empty? lsol) empty]
+    [else (cons (subtract ls (first lsol)) (subtract-ass ls (rest lsol)))]))
+
+
+;;用ls2中的每一个数字去sub ls1中的每一个数字,直到ls2中的第一个数字为0
+(define (subtract ls1 ls2)
+  (cond
+    [(= (first ls2) 0) (rest ls2)]
+    [else (subtract ls1 (sublist ls1 ls2))]))
+;;sublist:ls1 ls2 -> ls
+;;example : (sublist (list 2 2 3) (list 3 3 4)) -> (list 1 1 1)
+(define (sublist ls1 ls2)
+  (cond
+    [(empty? ls1) empty]
+    [(= (first ls1) 0) (sublist ls2 ls1)]
+    [else (sublist-ass (/ (first ls2) (first ls1)) ls1 ls2)]))
+
+(define (sublist-ass num ls1 ls2)
+  (cond
+    [(empty? ls1) empty]
+    [else (cons (-   (first ls2)  (* num (first ls1))) (sublist-ass num (rest ls1) (rest ls2)))]))
+
+
+;;给出一个正方形矩阵,返回一个三角形
+;;triangulate : list -> list
+(define (triangulate lsol)
+  (cond
+    [(empty? lsol) empty]
+    [(= (first (first lsol)) 0) (triangulate (switchrow lsol))]
+    [else (cons (first (subtract-2 lsol)) (triangulate (rest (subtract-2 lsol))))]))
+
+
+;; ***************************(triangulate (list (list 0 2 2) (list 0 -1 -4)))***********************
+(subtract-2 (list (list 2 2 2 6)
+               (list 2 2 4 8)
+               (list 2 2 1 2)))
+
+
+
+
+;;switchrow : (list (list 1 2 3) (list 3 4 5)) - > (list (list 3 4 5) (list 1 2 3))
+;;switchrow : (list (list 1) (list 2)) -> (list (list 2) (list 1))
+;;switchrow : (list empty) -> empty
+;;switchrow : (list (list 0 2 2) (list 0 -1 -4)) -> false
+(define (switchrow lsol)
+  (cond
+    [(empty? lsol) empty]
+    [(empty? (rest lsol)) lsol]
+    [(not (= (first (second lsol)) 0)) (cons (second lsol) (cons (first lsol) (switchrow (rest (rest lsol)))))]
+    [else lsol]))
+
+
+#|
+'将下面第一列数字不是0的转移上去
+(switchrow (list (list 0 1 2 ) (list 0 3 4) (list 2 3 4)))
+
+(triangulate (list (list 0 -5 5) (list -8 -4 -12)))
+
+'triangulate 
+ (triangulate (list (list 2 3 3 8)
+                     (list 2 3 -2 3)
+                     (list 4 -2 2 4)))
+
+(triangulate (list (list 1 -1 1 0)
+      (list 4 2 1 3)
+      (list 25 5 1 60)))
+
+ (triangulate (list (list 2 2  3 10) 
+	      (list 2 5 12 31)  
+	      (list 4 1 -2  1)))
+
+no Solution 
+(list (list 2 2 2 6)
+(list 2 2 4 8)
+(list 2 2 1 2))
+|#
+
+
